@@ -13,8 +13,8 @@ import com.digero.tools.soundfont.SampleInfo.Key;
 public class StandardInstrumentInfo extends InstrumentInfo
 {
 	public final SortedSet<SampleInfo> usedSamples;
-	private final int notesBelowSample;
-	private final int notesAboveSample;
+	protected final int notesBelowSample;
+	protected final int notesAboveSample;
 
 	public StandardInstrumentInfo(LotroInstrument lotroInstrument, int notesPerSample, Map<Key, SampleInfo> samples)
 	{
@@ -32,8 +32,11 @@ public class StandardInstrumentInfo extends InstrumentInfo
 
 		SortedSet<SampleInfo> usedSamples = new TreeSet<SampleInfo>();
 		int startId = lowestNoteId + notesBelowSample;
-		for (int id = startId; id <= highestNoteId; id += notesPerSample)
+		//System.err.println(name);
+		for (int id = startId; id <= highestNoteId; id += notesPerSample) {
+			//System.err.println(lotroInstrument.friendlyName+" "+Integer.toString(id));
 			usedSamples.add(samples.get(new Key(lotroInstrument, id)));
+		}
 
 		this.usedSamples = Collections.unmodifiableSortedSet(usedSamples);
 	}

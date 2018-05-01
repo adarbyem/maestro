@@ -33,22 +33,29 @@ import com.digero.common.util.Pair;
 // @formatter:off
 public enum LotroInstrument
 {
-	//                    friendlyName           sustainable   midiProgramId   octaveDelta   isPercussion  dBVolumeAdjust 
-	LUTE_OF_AGES        ( "Lute of Ages",        false,         24,             0,           false,          0.0f         ),
-	BASIC_LUTE          ( "Basic Lute",          false,         25,             0,           false,        -19.0f         ),
-	HARP                ( "Harp",                false,         46,             0,           false,          6.0f         ),
-	MISTY_MOUNTAIN_HARP ( "Misty Mountain Harp", false,         27,             0,           false,        -12.5f         ),
-	THEORBO             ( "Theorbo",             false,         32,            -1,           false,        -12.0f         ),
-	FLUTE               ( "Flute",                true,         73,             2,           false,         -0.5f         ),
-	CLARINET            ( "Clarinet",             true,         71,             1,           false,         -2.5f         ),
-	HORN                ( "Horn",                 true,         69,             0,           false,          0.0f         ),
-	BAGPIPE             ( "Bagpipe",              true,        109,             1,           false,         -3.2f         ),
-	PIBGORN             ( "Pibgorn",              true,         84,             2,           false,         -3.5f         ),
-	DRUMS               ( "Drums",               false,        118,             0,            true,          0.0f         ),
-	COWBELL             ( "Cowbell",             false,        115,             0,            true,          0.0f         ),
-	MOOR_COWBELL        ( "Moor Cowbell",        false,        114,             0,            true,          0.0f         ),
-	STUDENT_FIDDLE		("Student Fiddle",		  true,			40,				0,			 false,			 0.0f		  );
+	//                    		friendlyName            sustainable   midiProgramId   octaveDelta   isPercussion  dBVolumeAdjust sharingPgr C4 equals(measured using spectrum analyzer)
+	LUTE_OF_AGES        		( "Lute of Ages",             false,         24,        0,           false,         0.0f,        false),//C4
+	BASIC_LUTE          		( "Basic Lute",               false,         25,        0,           false,       -19.0f,        false),//C4
+	HARP                		( "Harp",                     false,         46,        0,           false,         6.0f,        false),//C4
+	MISTY_MOUNTAIN_HARP 		( "Misty Mountain Harp",      false,         27,        0,           false,       -12.5f,        false),//C4
+	THEORBO             		( "Theorbo",                  false,         32,       -1,           false,       -12.0f,        false),//C3
+	FLUTE               		( "Flute",                     true,         73,        2,           false,        -1.5f,        false),//C6
+	CLARINET            		( "Clarinet",                  true,         71,        1,           false,        -3.0f,        false),//C5
+	HORN                		( "Horn",                      true,         69,        0,           false,         0.0f,        false),//C4
+	BAGPIPE             		( "Bagpipe",                   true,        109,        1,           false,        -3.2f,        false),//C5
+	PIBGORN             		( "Pibgorn",                   true,         84,        2,           false,        -4.5f,        false),//C6
+	DRUMS               		( "Drums",                    false,        118,        0,            true,         0.0f,        false),
+	COWBELL             		( "Cowbell",                  false,        115,        0,            true,        -1.0f,        false),//E5
+	MOOR_COWBELL        		( "Moor Cowbell",             false,        114,        0,            true,         0.0f,        false),//C6
+	STUDENT_FIDDLE				( "Student Fiddle",		       true,		 60,		1,			 false,		   -3.0f,		 false),//C5  noises are:C2,C#2,D2
+	LONELY_MOUNTAIN_FIDDLE 		( "Lonely Mountain Fiddle",    true,		 41,	    1,			 false,		   -2.0f,		 false),//C5
+	SPRIGHTLY_FIDDLE			( "Sprightly Fiddle",	      false,		 49,		1,			 false,		   -1.5f,		 false),//C5
+	TRAVELLERS_TRUSTY_FIDDLE 	( "Travellers Trusty Fiddle", false,		 45, 		1,			 false,		   -1.5f,		 false),//C5
+	STUDENT_FIDDLE_NOFX		    ( "Student Fiddle NoFX",       true,		 60,		1,			 false,		   -3.0f,		  true),//C5
+	BASIC_FIDDLE     		    ( "Basic Fiddle",              true,		 61,		1,			 false,		   -3.0f,		 false);//C5
 // @formatter:on
+	
+	// volume adjustment 26 March 2018: flute, pibgorn, cowbell: -1.0   clarinet: -0.5  sprightly: +1.5  lonely: +1.0  trusty: +1.5 (guess)
 
 	public static final LotroInstrument DEFAULT_LUTE = LUTE_OF_AGES;
 	public static final LotroInstrument DEFAULT_INSTRUMENT = LUTE_OF_AGES;
@@ -61,11 +68,29 @@ public enum LotroInstrument
 	public final int midiProgramId;
 	public final int octaveDelta;
 	public final float dBVolumeAdjust;
+	public final boolean sharingProgram;
 
 	private LotroInstrument(String friendlyName, boolean sustainable, int midiProgramId, int octaveDelta,
-			boolean isPercussion, float dBVolumeAdjust)
+			boolean isPercussion, float dBVolumeAdjust, boolean sharingProgram)
 	{
-		this.lowestPlayable = Note.MIN_PLAYABLE;
+		if (midiProgramId == 60) {
+			if (friendlyName == "Student Fiddle NoFX") {
+				this.lowestPlayable = AbcConstants.STUDENT_FIDDLE_LOWEST_MUSICAL_NOTE;
+			} else {
+				this.lowestPlayable = Note.MIN_PLAYABLE;
+			}
+		} else if (midiProgramId == 41) {
+			//this.lowestPlayable = AbcConstants.LONELY_MOUNTAIN_FIDDLE_LOWEST_NOTE;
+			this.lowestPlayable = Note.MIN_PLAYABLE;
+		} else if (midiProgramId == 49) {
+			//this.lowestPlayable = AbcConstants.SPRIGHTLY_FIDDLE_LOWEST_NOTE;
+			this.lowestPlayable = Note.MIN_PLAYABLE;
+		} else if (midiProgramId == 45) {
+			//this.lowestPlayable = AbcConstants.TRAVELLERS_TRUSTY_FIDDLE_LOWEST_NOTE;
+			this.lowestPlayable = Note.MIN_PLAYABLE;
+		} else {
+			this.lowestPlayable = Note.MIN_PLAYABLE;			
+		}
 		this.highestPlayable = Note.MAX_PLAYABLE;
 		this.friendlyName = friendlyName;
 		this.sustainable = sustainable;
@@ -73,6 +98,7 @@ public enum LotroInstrument
 		this.octaveDelta = octaveDelta;
 		this.isPercussion = isPercussion;
 		this.dBVolumeAdjust = dBVolumeAdjust;
+		this.sharingProgram = sharingProgram;
 	}
 
 	public boolean isSustainable(int noteId)
@@ -97,6 +123,12 @@ public enum LotroInstrument
 			return DEFAULT_LUTE;
 		if (string.equals("MISTYHARP"))
 			return MISTY_MOUNTAIN_HARP;
+		if (string.equals("SPRIGHTLY"))
+			return SPRIGHTLY_FIDDLE;
+		if (string.equals("TRAVELLER"))
+			return TRAVELLERS_TRUSTY_FIDDLE;
+		if (string.equals("LONELY"))
+			return LONELY_MOUNTAIN_FIDDLE;
 
 		for (LotroInstrument i : values())
 		{
@@ -130,27 +162,39 @@ public enum LotroInstrument
 	{
 		if (instrumentNicknames.size() == 0)
 		{
+			// the order matters here, so make sure words that are used as part of names but also as standalone descriptions, like lute, harp and fiddle is added last.
+			// also since nicknames are checked first, "basic lute" could be seen as Lute and therefore lute of ages if not listed as nickname. Thats why some friendly names are relisted as nicknames.
 			addNicknames(LotroInstrument.BASIC_LUTE, "Basic Lute", "New Lute", "LuteB", "Banjo");
-			addNicknames(LotroInstrument.LUTE_OF_AGES, "Lute of Ages", "Age Lute", "LuteA", "LOA", "Guitar");
+			addNicknames(LotroInstrument.LUTE_OF_AGES, "Age Lute", "LuteA", "LOA", "Guitar");
 			addNicknames(LotroInstrument.DEFAULT_LUTE, "Lute");
-			addNicknames(LotroInstrument.MISTY_MOUNTAIN_HARP, "Misty Mountain Harp", "Misty Harp", "MM Harp", "MMH");
-			addNicknames(LotroInstrument.HARP, "Basic Harp");
+			addNicknames(LotroInstrument.MISTY_MOUNTAIN_HARP, "Misty Mountain Harp", "Misty Harp", "MM Harp", "MMH", "MMHarp");
+			addNicknames(LotroInstrument.HARP, "Basic Harp", "Gleowine's Harp", "Gleowines Harp");
 			addNicknames(LotroInstrument.THEORBO, "Theo", "Bass");
 			addNicknames(LotroInstrument.DRUMS, "Drum");
-			addNicknames(LotroInstrument.BAGPIPE, "Bagpipes");
+			addNicknames(LotroInstrument.CLARINET, "Clari");
+			addNicknames(LotroInstrument.BAGPIPE, "Bagpipes", "Pipes");
 			addNicknames(LotroInstrument.MOOR_COWBELL, "Moor Cowbell", "More Cowbell");
-			addNicknames(LotroInstrument.STUDENT_FIDDLE, "Student Fiddle", "Fiddle");
+			addNicknames(LotroInstrument.LONELY_MOUNTAIN_FIDDLE, "Lonely Mountain Fiddle", "LMFiddle", "Lonely Fiddle", "Mountain Fiddle");
+			addNicknames(LotroInstrument.SPRIGHTLY_FIDDLE, "Sprightly Fiddle", "SpFiddle");
+			addNicknames(LotroInstrument.TRAVELLERS_TRUSTY_FIDDLE, "Travellers Trusty Fiddle", "TTFiddle", "Travellers Fiddle", "Trusty Fiddle", "Traveller's Trusty Fiddle");
+			addNicknames(LotroInstrument.STUDENT_FIDDLE_NOFX, "Student Fiddle NoFX");
+			addNicknames(LotroInstrument.BASIC_FIDDLE, "Basic Fiddle", "BFiddle");
+			addNicknames(LotroInstrument.STUDENT_FIDDLE, "Fiddle", "StFiddle", "Student's Fiddle", "Students Fiddle");
 		}
 
+		// first check nicknames
 		for (Pair<Pattern, LotroInstrument> patternAndInstrument : instrumentNicknames)
 		{
-			if (patternAndInstrument.first.matcher(str).find())
+			if (patternAndInstrument.first.matcher(str).find()) {
 				return patternAndInstrument.second;
+			}
 		}
 
-		if (instrumentsRegex == null)
+		if (instrumentsRegex == null) {
 			instrumentsRegex = makeInstrumentRegex(LotroInstrument.values());
+		}
 
+		// second check friendly names
 		Matcher m = instrumentsRegex.matcher(str);
 		if (m.find())
 			return LotroInstrument.parseInstrument(m.group(1));

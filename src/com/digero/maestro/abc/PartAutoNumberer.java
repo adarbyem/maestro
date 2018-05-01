@@ -26,7 +26,10 @@ public class PartAutoNumberer
 			for (LotroInstrument instrument : LotroInstrument.values())
 			{
 				if (instrument != LotroInstrument.BASIC_LUTE && instrument != LotroInstrument.MISTY_MOUNTAIN_HARP
-						&& instrument != LotroInstrument.PIBGORN && instrument != LotroInstrument.MOOR_COWBELL)
+						&& instrument != LotroInstrument.PIBGORN && instrument != LotroInstrument.COWBELL
+						&& instrument != LotroInstrument.MOOR_COWBELL && instrument != LotroInstrument.LONELY_MOUNTAIN_FIDDLE
+						&& instrument != LotroInstrument.SPRIGHTLY_FIDDLE && instrument != LotroInstrument.TRAVELLERS_TRUSTY_FIDDLE
+						&& instrument != LotroInstrument.STUDENT_FIDDLE_NOFX)
 				{
 					i++;
 					int defaultValue = i;
@@ -51,9 +54,21 @@ public class PartAutoNumberer
 			firstNumber.put(LotroInstrument.PIBGORN,
 					prefs.getInt(LotroInstrument.PIBGORN.toString(), firstNumber.get(LotroInstrument.BAGPIPE)));
 
-			// Moor cowbell defaults to the cowbell number
+			// Cowbells defaults to the drum number
+			firstNumber.put(LotroInstrument.COWBELL,
+					prefs.getInt(LotroInstrument.COWBELL.toString(), firstNumber.get(LotroInstrument.DRUMS)));
 			firstNumber.put(LotroInstrument.MOOR_COWBELL,
-					prefs.getInt(LotroInstrument.MOOR_COWBELL.toString(), firstNumber.get(LotroInstrument.COWBELL)));
+					prefs.getInt(LotroInstrument.MOOR_COWBELL.toString(), firstNumber.get(LotroInstrument.DRUMS)));
+			
+			// Fiddles defaults to Student's fiddle number
+			firstNumber.put(LotroInstrument.LONELY_MOUNTAIN_FIDDLE,
+					prefs.getInt(LotroInstrument.LONELY_MOUNTAIN_FIDDLE.toString(), firstNumber.get(LotroInstrument.STUDENT_FIDDLE)));
+			firstNumber.put(LotroInstrument.SPRIGHTLY_FIDDLE,
+					prefs.getInt(LotroInstrument.SPRIGHTLY_FIDDLE.toString(), firstNumber.get(LotroInstrument.STUDENT_FIDDLE)));
+			firstNumber.put(LotroInstrument.TRAVELLERS_TRUSTY_FIDDLE,
+					prefs.getInt(LotroInstrument.TRAVELLERS_TRUSTY_FIDDLE.toString(), firstNumber.get(LotroInstrument.STUDENT_FIDDLE)));
+			firstNumber.put(LotroInstrument.STUDENT_FIDDLE_NOFX,
+					prefs.getInt(LotroInstrument.STUDENT_FIDDLE_NOFX.toString(), firstNumber.get(LotroInstrument.STUDENT_FIDDLE)));
 
 			incrementByTen = prefs.getBoolean("incrementByTen", true);
 		}
